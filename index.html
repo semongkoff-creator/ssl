@@ -127,82 +127,34 @@
             50% { opacity: 0.5; }
         }
 
-        /* Filter Section */
-        .filter-section {
+        /* Year Toggle */
+        .year-toggle {
             display: flex;
-            align-items: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
-
-        .filter-group {
-            display: flex;
-            align-items: center;
             gap: 10px;
         }
 
-        .filter-label {
-            color: var(--text-secondary);
-            font-size: 13px;
-            font-weight: 500;
-        }
-
-        .filter-select {
+        .year-btn {
             background: var(--bg-card);
             border: 1px solid var(--border);
-            color: var(--text-primary);
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-family: 'Poppins', sans-serif;
-            cursor: pointer;
-            transition: border-color 0.2s;
-            min-width: 150px;
-        }
-
-        .filter-select:hover {
-            border-color: var(--accent);
-        }
-
-        .filter-select:focus {
-            outline: none;
-            border-color: var(--accent);
-            box-shadow: 0 0 0 2px rgba(255, 107, 53, 0.2);
-        }
-
-        .filter-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: background 0.2s;
-            font-family: 'Poppins', sans-serif;
-        }
-
-        .filter-btn:hover {
-            background: var(--accent-dark);
-        }
-
-        .reset-btn {
-            background: transparent;
             color: var(--text-secondary);
-            border: 1px solid var(--border);
-            padding: 8px 16px;
+            padding: 10px 24px;
             border-radius: 8px;
-            font-size: 13px;
-            font-weight: 500;
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             font-family: 'Poppins', sans-serif;
         }
 
-        .reset-btn:hover {
-            border-color: var(--text-secondary);
+        .year-btn:hover {
+            border-color: var(--accent);
             color: var(--text-primary);
+        }
+
+        .year-btn.active {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: white;
         }
 
         /* Main Content */
@@ -392,18 +344,13 @@
                 font-size: 20px;
             }
 
-            .filter-section {
-                width: 100%;
-                flex-direction: column;
-                align-items: flex-start;
-            }
-
-            .filter-group {
+            .year-toggle {
                 width: 100%;
             }
 
-            .filter-select {
-                width: 100%;
+            .year-btn {
+                flex: 1;
+                text-align: center;
             }
 
             .container {
@@ -474,49 +421,6 @@
         .error-message.show {
             display: block;
         }
-
-        /* Config Warning */
-        .config-warning {
-            background: rgba(255, 152, 0, 0.1);
-            border: 1px solid var(--warning);
-            color: var(--warning);
-            padding: 12px 16px;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            display: none;
-        }
-
-        .config-warning.show {
-            display: block;
-        }
-
-        /* Active Filter Badge */
-        .filter-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: rgba(255, 107, 53, 0.2);
-            color: var(--accent);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-        }
-
-        .filter-badge button {
-            background: none;
-            border: none;
-            color: var(--accent);
-            cursor: pointer;
-            padding: 0;
-            font-size: 14px;
-            line-height: 1;
-        }
-
-        .filter-badge button:hover {
-            color: var(--accent-light);
-        }
     </style>
 </head>
 <body>
@@ -536,33 +440,15 @@
             </div>
         </div>
         
-        <!-- Filter Section -->
-        <div class="filter-section">
-            <div class="filter-group">
-                <label class="filter-label" for="filterBulan">Filter Bulan:</label>
-                <select class="filter-select" id="filterBulan">
-                    <option value="">Semua Bulan</option>
-                </select>
-            </div>
-            <div class="filter-group">
-                <label class="filter-label" for="filterTahun">Filter Tahun:</label>
-                <select class="filter-select" id="filterTahun">
-                    <option value="">Semua Tahun</option>
-                </select>
-            </div>
-            <button class="filter-btn" onclick="applyFilter()">Terapkan</button>
-            <button class="reset-btn" onclick="resetFilter()">Reset</button>
-            <div id="activeFilter"></div>
+        <!-- Year Toggle -->
+        <div class="year-toggle">
+            <button class="year-btn active" onclick="switchYear('2024')" id="btn2024">2024</button>
+            <button class="year-btn" onclick="switchYear('2025')" id="btn2025">2025</button>
         </div>
     </header>
 
     <!-- Main Content -->
     <main class="container">
-        <!-- Config Warning -->
-        <div class="config-warning" id="configWarning">
-            ⚠️ Silakan masukkan URL Google Apps Script Web App Anda di kode JavaScript pada variabel <code>APPS_SCRIPT_URL</code>
-        </div>
-
         <!-- Error Message -->
         <div class="error-message" id="errorMessage"></div>
 
@@ -574,7 +460,7 @@
                     <div class="card-icon">💰</div>
                 </div>
                 <div class="card-value accent" id="totalSales">-</div>
-                <div class="card-subtitle">Dari data yang ditampilkan</div>
+                <div class="card-subtitle">Total penjualan tahun <span id="currentYear">2024</span></div>
             </div>
             <div class="card">
                 <div class="card-header">
@@ -633,46 +519,45 @@
     </main>
 
     <script>
-        // ============================================================
-        // CONFIGURATION - PASTE YOUR GOOGLE APPS SCRIPT WEB APP URL
-        // ============================================================
-        
-        // Contoh format URL Apps Script:
-        // const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/XXXXXXXXXXXXX/exec';
-        
-        // ============================================================
-        // TEMPORARY: Using sample data for demonstration
-        // Delete this section when you have your Apps Script URL
-        // ============================================================
-        const USE_SAMPLE_DATA = true;
-        
-        const SAMPLE_DATA = [
-            { no: 1, bulan: "Januari 2024", penjualan: 42000000, target: 40000000, transaksi: 210, retur: 5 },
-            { no: 2, bulan: "Februari 2024", penjualan: 38500000, target: 40000000, transaksi: 195, retur: 8 },
-            { no: 3, bulan: "Maret 2024", penjualan: 45000000, target: 42000000, transaksi: 230, retur: 3 },
-            { no: 4, bulan: "April 2024", penjualan: 52000000, target: 45000000, transaksi: 265, retur: 6 },
-            { no: 5, bulan: "Mei 2024", penjualan: 48000000, target: 45000000, transaksi: 245, retur: 4 },
-            { no: 6, bulan: "Juni 2024", penjualan: 55000000, target: 50000000, transaksi: 280, retur: 7 },
-            { no: 7, bulan: "Juli 2024", penjualan: 58000000, target: 55000000, transaksi: 290, retur: 5 },
-            { no: 8, bulan: "Agustus 2024", penjualan: 62000000, target: 55000000, transaksi: 310, retur: 8 },
-            { no: 9, bulan: "September 2024", penjualan: 59000000, target: 55000000, transaksi: 295, retur: 4 },
-            { no: 10, bulan: "Oktober 2024", penjualan: 65000000, target: 60000000, transaksi: 325, retur: 6 },
-            { no: 11, bulan: "November 2024", penjualan: 72000000, target: 65000000, transaksi: 360, retur: 9 },
-            { no: 12, bulan: "Desember 2024", penjualan: 85000000, target: 70000000, transaksi: 425, retur: 12 },
-            { no: 13, bulan: "Januari 2025", penjualan: 48000000, target: 45000000, transaksi: 240, retur: 4 },
-            { no: 14, bulan: "Februari 2025", penjualan: 51000000, target: 48000000, transaksi: 255, retur: 6 },
-            { no: 15, bulan: "Maret 2025", penjualan: 56000000, target: 50000000, transaksi: 280, retur: 5 }
-        ];
-        
-        const APPS_SCRIPT_URL = ''; // <-- PASTE YOUR URL HERE
-        // ============================================================
+        // CSV URLs for each year
+        const URLS = {
+            2024: `https://docs.google.com/spreadsheets/d/1Ly7Jis9IWfYWjP7-E2LrQA0D8eyunQh-NRri2TnPwho/gviz/tq?tqx=out:csv&sheet=penjualan_bulanan`,
+            2025: `https://docs.google.com/spreadsheets/d/1Ly7Jis9IWfYWjP7-E2LrQA0D8eyunQh-NRri2TnPwho/gviz/tq?tqx=out:csv&sheet=penjualan_bulanan_2025`
+        };
+
+        // Fallback sample data
+        const SAMPLE_DATA = {
+            2024: [
+                { no: 1, bulan: "Januari", penjualan: 42000000, target: 40000000, transaksi: 210, retur: 5 },
+                { no: 2, bulan: "Februari", penjualan: 38500000, target: 40000000, transaksi: 195, retur: 8 },
+                { no: 3, bulan: "Maret", penjualan: 45000000, target: 42000000, transaksi: 230, retur: 3 },
+                { no: 4, bulan: "April", penjualan: 52000000, target: 45000000, transaksi: 265, retur: 6 },
+                { no: 5, bulan: "Mei", penjualan: 48000000, target: 45000000, transaksi: 245, retur: 4 },
+                { no: 6, bulan: "Juni", penjualan: 55000000, target: 50000000, transaksi: 280, retur: 7 },
+                { no: 7, bulan: "Juli", penjualan: 58000000, target: 55000000, transaksi: 290, retur: 5 },
+                { no: 8, bulan: "Agustus", penjualan: 62000000, target: 55000000, transaksi: 310, retur: 8 },
+                { no: 9, bulan: "September", penjualan: 59000000, target: 55000000, transaksi: 295, retur: 4 },
+                { no: 10, bulan: "Oktober", penjualan: 65000000, target: 60000000, transaksi: 325, retur: 6 },
+                { no: 11, bulan: "November", penjualan: 72000000, target: 65000000, transaksi: 360, retur: 9 },
+                { no: 12, bulan: "Desember", penjualan: 85000000, target: 70000000, transaksi: 425, retur: 12 }
+            ],
+            2025: [
+                { no: 1, bulan: "Januari", penjualan: 48000000, target: 45000000, transaksi: 240, retur: 4 },
+                { no: 2, bulan: "Februari", penjualan: 51000000, target: 48000000, transaksi: 255, retur: 6 },
+                { no: 3, bulan: "Maret", penjualan: 56000000, target: 50000000, transaksi: 280, retur: 5 },
+                { no: 4, bulan: "April", penjualan: 59000000, target: 52000000, transaksi: 295, retur: 7 },
+                { no: 5, bulan: "Mei", penjualan: 62000000, target: 55000000, transaksi: 310, retur: 4 },
+                { no: 6, bulan: "Juni", penjualan: 68000000, target: 58000000, transaksi: 340, retur: 8 }
+            ]
+        };
 
         const CONFIG = {
-            refreshInterval: 60000 // 60 seconds
+            refreshInterval: 60000, // 60 seconds
+            useSampleData: true // Set to false when using real URLs
         };
 
         let chart = null;
-        let allData = [];
+        let currentYear = '2024';
 
         // Format number to Indonesian Rupiah
         function formatCurrency(number) {
@@ -709,149 +594,85 @@
             }, 5000);
         }
 
-        // Show config warning
-        function showConfigWarning() {
-            document.getElementById('configWarning').classList.add('show');
+        // Switch year
+        function switchYear(year) {
+            currentYear = year;
+            
+            // Update button styles
+            document.getElementById('btn2024').classList.toggle('active', year === '2024');
+            document.getElementById('btn2025').classList.toggle('active', year === '2025');
+            
+            // Update year label
+            document.getElementById('currentYear').textContent = year;
+            
+            // Fetch new data
+            fetchAndRender();
         }
 
-        // Extract month and year from bulan string
-        function parseBulan(bulanStr) {
-            const bulanNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-            const parts = bulanStr.split(' ');
-            const bulanName = parts[0];
-            const tahun = parts[1] || '';
-            const bulanIndex = bulanNames.findIndex(b => b.toLowerCase() === bulanName.toLowerCase());
-            return { bulan: bulanName, tahun: tahun, bulanIndex: bulanIndex };
-        }
-
-        // Populate filter dropdowns
-        function populateFilters(data) {
-            const bulanSet = new Set();
-            const tahunSet = new Set();
+        // Fetch data from CSV
+        async function fetchCSV(url) {
+            const response = await fetch(url);
             
-            data.forEach(item => {
-                const parsed = parseBulan(item.bulan);
-                bulanSet.add(parsed.bulan);
-                if (parsed.tahun) tahunSet.add(parsed.tahun);
-            });
-            
-            // Sort bulan
-            const sortedBulan = Array.from(bulanSet).sort((a, b) => {
-                const bulanNames = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-                return bulanNames.indexOf(a) - bulanNames.indexOf(b);
-            });
-            
-            // Sort tahun
-            const sortedTahun = Array.from(tahunSet).sort();
-            
-            // Populate Bulan dropdown
-            const bulanSelect = document.getElementById('filterBulan');
-            bulanSelect.innerHTML = '<option value="">Semua Bulan</option>';
-            sortedBulan.forEach(bulan => {
-                const option = document.createElement('option');
-                option.value = bulan;
-                option.textContent = bulan;
-                bulanSelect.appendChild(option);
-            });
-            
-            // Populate Tahun dropdown
-            const tahunSelect = document.getElementById('filterTahun');
-            tahunSelect.innerHTML = '<option value="">Semua Tahun</option>';
-            sortedTahun.forEach(tahun => {
-                const option = document.createElement('option');
-                option.value = tahun;
-                option.textContent = tahun;
-                tahunSelect.appendChild(option);
-            });
-        }
-
-        // Apply filter
-        function applyFilter() {
-            const bulanFilter = document.getElementById('filterBulan').value;
-            const tahunFilter = document.getElementById('filterTahun').value;
-            
-            let filteredData = allData;
-            
-            if (bulanFilter) {
-                filteredData = filteredData.filter(item => {
-                    const parsed = parseBulan(item.bulan);
-                    return parsed.bulan === bulanFilter;
-                });
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             
-            if (tahunFilter) {
-                filteredData = filteredData.filter(item => {
-                    const parsed = parseBulan(item.bulan);
-                    return parsed.tahun === tahunFilter;
-                });
+            const csvText = await response.text();
+            
+            if (!csvText || csvText.trim() === '') {
+                throw new Error('Tidak ada data yang ditemukan');
             }
             
-            // Update active filter badge
-            const activeFilterDiv = document.getElementById('activeFilter');
-            if (bulanFilter || tahunFilter) {
-                const filters = [];
-                if (bulanFilter) filters.push(bulanFilter);
-                if (tahunFilter) filters.push(tahunFilter);
-                activeFilterDiv.innerHTML = `<span class="filter-badge">Filter: ${filters.join(', ')} <button onclick="resetFilter()" title="Hapus filter">×</button></span>`;
-            } else {
-                activeFilterDiv.innerHTML = '';
-            }
+            // Parse CSV
+            const lines = csvText.trim().split('\n');
+            const data = lines.slice(1).map(line => {
+                const row = [];
+                let current = '';
+                let inQuotes = false;
+                
+                for (let i = 0; i < line.length; i++) {
+                    const char = line[i];
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        row.push(current.trim());
+                        current = '';
+                    } else {
+                        current += char;
+                    }
+                }
+                row.push(current.trim());
+                
+                return row;
+            });
             
-            // Update dashboard with filtered data
-            updateDashboardWithData(filteredData);
+            // Map to object (Kolom: A=No, B=Bulan, C=Penjualan, D=Target, E=Transaksi, F=Retur)
+            return data.map(row => ({
+                no: parseInt(row[0]) || 0,
+                bulan: row[1] || '-',
+                penjualan: parseFloat(row[2]?.replace(/[^0-9.-]/g, '')) || 0,
+                target: parseFloat(row[3]?.replace(/[^0-9.-]/g, '')) || 0,
+                transaksi: parseInt(row[4]?.replace(/[^0-9]/g, '')) || 0,
+                retur: parseInt(row[5]?.replace(/[^0-9]/g, '')) || 0
+            })).filter(item => item.bulan !== '-');
         }
 
-        // Reset filter
-        function resetFilter() {
-            document.getElementById('filterBulan').value = '';
-            document.getElementById('filterTahun').value = '';
-            document.getElementById('activeFilter').innerHTML = '';
-            updateDashboardWithData(allData);
-        }
-
-        // Fetch data from Google Apps Script Web App
+        // Fetch data
         async function fetchData() {
-            showLoading();
-            
-            // Use sample data if no Apps Script URL configured
-            if (USE_SAMPLE_DATA || !APPS_SCRIPT_URL) {
-                console.log('Using sample data for demonstration');
-                await new Promise(resolve => setTimeout(resolve, 800)); // Simulate loading
-                return SAMPLE_DATA;
+            if (CONFIG.useSampleData) {
+                await new Promise(resolve => setTimeout(resolve, 500));
+                return SAMPLE_DATA[currentYear];
             }
             
             try {
-                console.log('Fetching from Google Apps Script Web App...');
-                
-                const response = await fetch(APPS_SCRIPT_URL, {
-                    mode: 'cors'
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP error: ${response.status} - ${response.statusText}`);
-                }
-                
-                const json = await response.json();
-                
-                if (!json.data || !Array.isArray(json.data)) {
-                    throw new Error('Format data tidak valid. Pastikan Apps Script mengembalikan { "data": [...] }');
-                }
-                
-                console.log('Data fetched successfully:', json.data.length, 'records');
-                return json.data;
-                
+                const url = URLS[currentYear];
+                console.log('Fetching from:', url);
+                return await fetchCSV(url);
             } catch (error) {
                 console.error('Error fetching data:', error);
-                
-                if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
-                    showError('Gagal mengambil data: Network Error. Pastikan URL Apps Script benar dan sudah di-deploy sebagai Web App.');
-                } else if (error.message.includes('CORS')) {
-                    showError('CORS Error: Pastikan Web App di-deploy dengan "Execute as: Me" dan "Access: Anyone".');
-                } else {
-                    showError(`Gagal mengambil data: ${error.message}`);
-                }
-                
-                return SAMPLE_DATA;
+                showError(`Gagal mengambil data: ${error.message}`);
+                // Return sample data as fallback
+                return SAMPLE_DATA[currentYear];
             }
         }
 
@@ -1024,57 +845,33 @@
             });
         }
 
-        // Update dashboard with specific data
-        function updateDashboardWithData(data) {
-            updateSummaryCards(data);
-            updateChart(data);
-            updateTable(data);
-        }
-
-        // Main function to update dashboard
-        async function updateDashboard() {
+        // Fetch and render
+        async function fetchAndRender() {
+            showLoading();
+            
             try {
                 const data = await fetchData();
                 
                 if (data && data.length > 0) {
-                    allData = data;
-                    populateFilters(data);
-                    
-                    // Get current filter values
-                    const bulanFilter = document.getElementById('filterBulan').value;
-                    const tahunFilter = document.getElementById('filterTahun').value;
-                    
-                    // Apply filter if any is set
-                    let displayData = data;
-                    if (bulanFilter) {
-                        displayData = displayData.filter(item => parseBulan(item.bulan).bulan === bulanFilter);
-                    }
-                    if (tahunFilter) {
-                        displayData = displayData.filter(item => parseBulan(item.bulan).tahun === tahunFilter);
-                    }
-                    
-                    updateDashboardWithData(displayData);
+                    updateSummaryCards(data);
+                    updateChart(data);
+                    updateTable(data);
                 } else {
                     showError('Tidak ada data yang ditemukan');
                 }
             } catch (error) {
-                console.error('Dashboard update error:', error);
+                console.error('Error updating dashboard:', error);
             } finally {
                 hideLoading();
             }
         }
 
-        // Initialize dashboard
+        // Initialize
         document.addEventListener('DOMContentLoaded', function() {
-            // Show config warning if no Apps Script URL
-            if (!APPS_SCRIPT_URL && !USE_SAMPLE_DATA) {
-                showConfigWarning();
-            }
-            
-            updateDashboard();
+            fetchAndRender();
             
             // Auto refresh every 60 seconds
-            setInterval(updateDashboard, CONFIG.refreshInterval);
+            setInterval(fetchAndRender, CONFIG.refreshInterval);
         });
     </script>
 </body>
